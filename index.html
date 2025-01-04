@@ -25,8 +25,8 @@
         // Phaser Game Configuration
         const config = {
             type: Phaser.AUTO,
-            width: 800, // Adjust as needed
-            height: 600, // Adjust as needed
+            width: 800,
+            height: 600,
             physics: {
                 default: 'arcade',
                 arcade: {
@@ -104,17 +104,6 @@
             });
 
             this.cursors = this.input.keyboard.createCursorKeys();
-
-            // Facebook Instant Games initialization and game start (if FBInstant is available)
-            if (typeof FBInstant !== 'undefined') {
-                this
-                    .fbLeaderboard = null;
-                FBInstant.initializeAsync()
-                    .then(FBInstant.startGameAsync)
-                    .then(() => {
-                        this.fetchLeaderboardData();
-                    });
-            }
         }
 
         function update(time, delta) {
@@ -132,9 +121,6 @@
                 this.player.setVelocity(0, 0);
             }
         }
-
-        // Leaderboard Functions (similar to previous examples)
-        // ... (fetchLeaderboardData, displayLeaderboard, updateLeaderboard) ...
 
         // Start the Phaser game
         new Phaser.Game(config); 
