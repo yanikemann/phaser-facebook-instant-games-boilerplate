@@ -18,112 +18,114 @@
 </head>
 
 <body>
-    <script src="https://cdn.jsdelivr.net/npm/phaser@3.87.0/dist/phaser.min.js"></script>
-    <script src="https://connect.facebook.net/en_US/fbinstant.6.2.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/phaser/3.87.0/phaser.min.js"
+        integrity="sha512-e251dDfxfj70o3iWsf84M612cWbWdTXjVbFXA7MavobTcKB1sCLV+WNiduc20UrpWLXRgi1tgob1TOAfySx9Xg=="
+        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="https://connect.facebook.net/en_US/fbinstant.6.3.js"></script>
 
     <script>
+        class Boot extends Phaser.Scene {
+            constructor() {
+                super("Boot");
+            }
+
+            preload() {
+                this.load.image('sky', 'assets/sky.png');
+                this.load.image('bomb', 'assets/bomb.png');
+                this.load.image('player', 'assets/player.png');
+
+                this.load.on('progress', (value) => {
+                    if (typeof FBInstant !== 'undefined') {
+                        FBInstant.initializeAsync()
+                            .then(FBInstant.startGameAsync)
+                            .then(() => {
+                                FBInstant.setLoadingProgress(value * 100);
+                            });
+                    }
+                });
+            }
+
+            create() {
+                this.add.image(0, 0, 'sky').setOrigin(0, 0);
+                this.speed = 500;
+                this.hits = 0;
+
+                this.text = this.add.text(config.width - 16, 12, 'Hits: 0', { fontSize: '22px', fill: '#fff' })
+                    .setOrigin(1, 0);
+
+                this.player = this.physics.add.sprite(0, 0, 'player')
+                    .setOrigin(0, 0)
+                    .setCollideWorldBounds(true);
+
+                const bombs = this.physics.add.group();
+                bombs.createMultiple({
+                    classType: Phaser.Physics.Arcade.Sprite,
+                    quantity: 5,
+                    key: 'bomb',
+                    active: true,
+                    setXY: {
+                        x: config.width / 2,
+                        y: config.height / 2,
+                        stepX: 20,
+                        stepY: 20
+                    },
+                });
+
+                bombs.getChildren().forEach((bomb) => {
+                    bomb.setBounce(1)
+                        .setCollideWorldBounds(true)
+                        .setVelocity(Phaser.Math.Between(-500, 500), Phaser.Math.Between(-500, 500))
+                        .setImmovable(true);
+                });
+
+                this.physics.add.collider(this.player, bombs, () => {
+                    this.hits++;
+                    this.text.setText(`Hits: ${this.hits}`);
+                    this.player
+                        .setX(config.width / 2)
+                        .setY(config.height / 2);
+                });
+
+                this.cursors = this.input.keyboard.createCursorKeys();
+            }
+
+            update(time, delta) {
+                const { up, down, left, right } = this.cursors;
+
+                if (up.isDown) {
+                    this.player.setVelocity(0, -this.speed);
+                } else if (down.isDown) {
+                    this.player.setVelocity(0, this.speed);
+                } else if (left.isDown) {
+                    this.player.setVelocity(-this.speed, 0);
+                } else if (right.isDown) {
+                    this.player.setVelocity(this.speed, 0);
+                } else {
+                    this.player.setVelocity(0, 0);
+                }
+            }
+        }
+
         // Phaser Game Configuration
         const config = {
             type: Phaser.AUTO,
-            width: 800,
-            height: 600,
+            width: 375,
+            height: 812,
             physics: {
                 default: 'arcade',
                 arcade: {
                     gravity: { y: 0 },
                 }
             },
-            scene: {
-                preload: preload,
-                create: create,
-                update: update
-            }
+            scene: [Boot]
         };
 
-        // Phaser Scene Functions
-        function preload() {
-            this.load.image('sky', 'assets/sky.png');
-            this.load.image('bomb', 'assets/bomb.png');
-            this.load.image('player', 'assets/player.png');
-
-            this.load.on('progress', (value) => {
-                if (typeof FBInstant !== 'undefined') {
-                    FBInstant.initializeAsync()
-                        .then(FBInstant.startGameAsync)
-                        .then(() => {
-                            FBInstant.setLoadingProgress(value * 100);
-                        });
-                }
-            });
-        }
-
-        function create() {
-            this.add.image(0, 0, 'sky').setOrigin(0, 0);
-            this.speed = 500;
-            this.hits = 0;
-
-            this.text = this.add.text(config.width - 16, 12, 'Hits: 0', { fontSize: '22px', fill: '#fff' })
-                .setOrigin(1, 0);
-
-            this.player = this.physics.add.sprite(0, 0, 'player')
-                .setOrigin(0, 0)
-                .setCollideWorldBounds(true);
-
-            const bombs = this.physics.add.group();
-            bombs.createMultiple({
-                classType: Phaser.Physics.Arcade.Sprite,
-                quantity: 5,
-                key: 'bomb',
-                active: true,
-                setXY: {
-                    x: config.width / 2,
-                    y: config.height / 2,
-                    stepX: 20,
-                    stepY: 20
-                },
-            });
-
-            bombs.getChildren().forEach((bomb) => {
-                bomb.setBounce(1)
-                    .setCollideWorldBounds(true)
-                    .setVelocity(Phaser.Math.Between(-500, 500), Phaser.Math.Between(-500, 500))
-                    .setImmovable(true);
-            });
-
-            this.physics.add.collider(this.player, bombs, () => {
-                this.hits++;
-                this.text.setText(`Hits: ${this.hits}`);
-                this.player
-                    .setX(config.width / 2)
-                    .setY(config.height / 2);
-
-                // Update and submit score to leaderboard (if FBInstant is available)
-                if (typeof FBInstant !== 'undefined') {
-                    this.updateLeaderboard(this.hits);
-                }
-            });
-
-            this.cursors = this.input.keyboard.createCursorKeys();
-        }
-
-        function update(time, delta) {
-            const { up, down, left, right } = this.cursors;
-
-            if (up.isDown) {
-                this.player.setVelocity(0, -this.speed);
-            } else if (down.isDown) {
-                this.player.setVelocity(0, this.speed);
-            } else if (left.isDown) {
-                this.player.setVelocity(-this.speed, 0);
-            } else if (right.isDown) {
-                this.player.setVelocity(this.speed, 0);
-            } else {
-                this.player.setVelocity(0, 0);
-            }
-        }
-
         // Start the Phaser game
-        new Phaser.Game(config); 
+        window.onload = function () {
+            FBInstant.initializeAsync()
+                .then(FBInstant.startGameAsync)
+                .then(new Phaser.Game(config));
+        };
     </script>
 </body>
 
