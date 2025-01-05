@@ -1,5 +1,5 @@
 # phaser-facebook-instant-games-boilerplate
-This is a boilerplate to use to create Facebook Instant Games using PhaserJS.
+This is a boilerplate for creating Facebook Instant Games using PhaserJS.
 
 ## Local Development
 To develop on local, create a .env in the root directory of your app and add the following:
