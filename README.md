@@ -10,3 +10,5 @@ Only ZIP the following files for Facebook Instant Games:
 - assets (directory)
 
 ![screenshot](screenshot.png)
+
+![screenshot](screenshot2.png)
