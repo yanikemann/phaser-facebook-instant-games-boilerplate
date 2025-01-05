@@ -5,3 +5,5 @@ Only ZIP the following files for Facebook Instant Games:
 - index.html
 - fbapp-config.json
 - assets (directory)
+
+![screenshot](screenshot.png)
