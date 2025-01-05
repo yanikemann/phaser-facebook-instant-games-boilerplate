@@ -23,7 +23,15 @@
         crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     <script src="https://connect.facebook.net/en_US/fbinstant.6.3.js"></script>
 
-    <script>
+    <script type="module">
+        let viteEnv = "";
+
+        if (typeof import.meta.env !== 'undefined') {
+            if ('VITE_ENVIRONMENT' in import.meta.env) {
+                viteEnv = import.meta.env.VITE_ENVIRONMENT;
+            }
+        }
+
         class Boot extends Phaser.Scene {
             constructor() {
                 super("Boot");
@@ -31,11 +39,11 @@
 
             preload() {
                 this.load.image('sky', 'assets/sky.png');
-                FBInstant && FBInstant.setLoadingProgress(25);
+                viteEnv !== "sandbox" && FBInstant && FBInstant.setLoadingProgress(25);
                 this.load.image('bomb', 'assets/bomb.png');
-                FBInstant && FBInstant.setLoadingProgress(75);
+                viteEnv !== "sandbox" && FBInstant && FBInstant.setLoadingProgress(75);
                 this.load.image('player', 'assets/player.png');
-                FBInstant && FBInstant.setLoadingProgress(100);
+                viteEnv !== "sandbox" && FBInstant && FBInstant.setLoadingProgress(100);
             }
 
             create() {
@@ -115,10 +123,14 @@
 
         // Start the Phaser game
         window.onload = function () {
-            FBInstant.initializeAsync()
-                .then(FBInstant.startGameAsync)
-                .then(new Phaser.Game(config));
-        };
+            viteEnv === "sandbox" ? (
+                new Phaser.Game(config)
+            ) : (
+                FBInstant.initializeAsync()
+                    .then(FBInstant.startGameAsync)
+                    .then(new Phaser.Game(config))
+            )
+        }
     </script>
 </body>
 
