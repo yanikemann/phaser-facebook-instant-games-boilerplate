@@ -31,18 +31,11 @@
 
             preload() {
                 this.load.image('sky', 'assets/sky.png');
+                FBInstant && FBInstant.setLoadingProgress(25);
                 this.load.image('bomb', 'assets/bomb.png');
+                FBInstant && FBInstant.setLoadingProgress(75);
                 this.load.image('player', 'assets/player.png');
-
-                this.load.on('progress', (value) => {
-                    if (typeof FBInstant !== 'undefined') {
-                        FBInstant.initializeAsync()
-                            .then(FBInstant.startGameAsync)
-                            .then(() => {
-                                FBInstant.setLoadingProgress(value * 100);
-                            });
-                    }
-                });
+                FBInstant && FBInstant.setLoadingProgress(100);
             }
 
             create() {
