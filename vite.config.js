@@ -4,19 +4,19 @@ import copy from 'rollup-plugin-copy';
 export default defineConfig({
   build: {
     rollupOptions: {
-      input: 'index.html', // Entry point for the app
+      input: 'index.html', // Entry point for Vite
     },
-    assetsInlineLimit: 0, // Ensures assets aren't inlined as base64
-    outDir: 'dist', // Output directory for the build
+    outDir: 'dist', // Output directory
     emptyOutDir: true, // Clears the output directory before building
   },
   plugins: [
     copy({
       targets: [
-        { src: 'assets/**/*', dest: 'dist/assets' }, // Copy all files from 'assets/' to 'dist/assets'
-        { src: 'fbapp-config.json', dest: 'dist' }, // Copy 'fbapp-config.json' to 'dist'
+        { src: 'index.html', dest: 'dist' }, // Keep index.html
+        { src: 'fbapp-config.json', dest: 'dist' }, // Keep fbapp-config.json
+        { src: 'assets/**/*', dest: 'dist/assets' }, // Keep assets directory
       ],
-      hook: 'writeBundle', // Ensure files are copied after the build is done
+      hook: 'writeBundle', // Ensures copying happens after the build
     }),
   ],
 });
