@@ -9,5 +9,8 @@
   },
   "devDependencies": {
     "vite": "^5.1.6"
+  },
+  "dependencies": {
+    "rollup-plugin-copy": "^3.5.0"
   }
 }
