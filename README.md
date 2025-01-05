@@ -15,7 +15,7 @@ Using Terminal run the following commands:
 
 ## Deploying to Facebook Instant Games
 
-To deploy to Facebook Instant Games, run `npm run build` and Vite will build the "dist" directory folder for you. Right click the directory and Zip it up (creating an archive file). Upload that archive file to Facebook Instant Games.
+To deploy to Facebook Instant Games, run `npm run build` in terminal. Vite will build the "dist" directory folder for you. Zip up the "dist" directory creating an archive file. Upload that archive file to Facebook Instant Games.
 
 ![screenshot](screenshot.png)
 
