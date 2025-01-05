@@ -1,5 +1,10 @@
 import { defineConfig } from 'vite';
 import copy from 'rollup-plugin-copy';
+import { rmSync } from 'fs';
+import { createRequire } from 'module'; // Import createRequire from Node.js
+
+const require = createRequire(import.meta.url); // Create a CommonJS require function
+const glob = require('glob'); // Use CommonJS require to import glob
 
 export default defineConfig({
   build: {
@@ -18,5 +23,19 @@ export default defineConfig({
       ],
       hook: 'writeBundle', // Ensures copying happens after the build
     }),
+    {
+      name: 'cleanup-generated-files',
+      writeBundle() {
+        try {
+          // Match all files with the pattern
+          const files = glob.sync('dist/assets/index-*.js');
+          // Delete each matched file
+          files.forEach((file) => rmSync(file));
+          console.log(`Cleanup completed: Removed ${files.length} unnecessary files.`);
+        } catch (err) {
+          console.error('Error during cleanup:', err);
+        }
+      },
+    },
   ],
 });
