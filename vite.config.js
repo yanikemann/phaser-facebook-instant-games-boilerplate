@@ -7,6 +7,9 @@ const require = createRequire(import.meta.url); // Create a CommonJS require fun
 const glob = require('glob'); // Use CommonJS require to import glob
 
 export default defineConfig({
+  server: {
+    port: 4040,
+  },
   build: {
     rollupOptions: {
       input: 'index.html', // Entry point for Vite
