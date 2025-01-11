@@ -110,8 +110,16 @@
         // Phaser Game Configuration
         const config = {
             type: Phaser.AUTO,
-            width: 375,
-            height: 480,
+            scale: {
+                mode: Phaser.Scale.FIT,
+                autoCenter: Phaser.Scale.CENTER_BOTH,
+                width: 375,
+                height: 480,
+            },
+            min: {
+                width: 375,
+                height: 480,
+            },
             physics: {
                 default: 'arcade',
                 arcade: {
